@@ -8,7 +8,7 @@ const Header = () =>(
 <header>
     <Navbar className="Header" variant = "dark" expand="lg">
     <Container>
-        <Navbar.Brand href="#home">
+        <Navbar.Brand href="/">
             Книжная полка
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

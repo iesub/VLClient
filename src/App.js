@@ -1,11 +1,12 @@
 import $ from "jquery";
 import './css/App.css';
+import Header from "./component/Header"
 
 function allo(){
   $.ajax({
     url: 'http://localhost:13378/login',         
     method: 'post',
-    data: {username: "iesubbotin@gmail.com", password: "123"},             
+    data: {username: "iesubbotin@gmail.com", password: "123", rememberme: true},             
     dataType: 'html',
     credentials: "same-origin",
     xhrFields:{
@@ -19,10 +20,14 @@ function allo(){
 
 function allo1(){
   $.ajax({
-    url: 'http://localhost:13378/',         
+    url: 'http://localhost:13378/logout',         
     method: 'get',
     data: {username: "iesubbotin@gmail.com", password: "123"},             
-    dataType: 'html',          
+    dataType: 'html',  
+    credentials: "same-origin",
+    xhrFields:{
+      withCredentials: true
+    },           
     success: function(data){   
       $("#cont").append(data);           
     }
@@ -30,12 +35,8 @@ function allo1(){
 }
 
 const App = () => {
-
-  allo()
-
   return(
-    <div id = "cont">
-    </div>
+    <Header></Header>
   )
 }
 
