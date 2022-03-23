@@ -1,43 +1,20 @@
 import $ from "jquery";
 import './css/App.css';
 import Header from "./component/Header"
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./component/Home";
+import Login from "./component/Login";
+import Registration from "./component/Registration"
 
-function allo(){
-  $.ajax({
-    url: 'http://localhost:13378/login',         
-    method: 'post',
-    data: {username: "iesubbotin@gmail.com", password: "123", rememberme: true},             
-    dataType: 'html',
-    credentials: "same-origin",
-    xhrFields:{
-      withCredentials: true
-    },               
-    success: function(data){   
-      $("#cont").append(data);           
-    }
-  });
-}
-
-function allo1(){
-  $.ajax({
-    url: 'http://localhost:13378/logout',         
-    method: 'get',
-    data: {username: "iesubbotin@gmail.com", password: "123"},             
-    dataType: 'html',  
-    credentials: "same-origin",
-    xhrFields:{
-      withCredentials: true
-    },           
-    success: function(data){   
-      $("#cont").append(data);           
-    }
-  });
-}
-
-const App = () => {
-  return(
-    <Header></Header>
-  )
-}
+const App = () => (
+  <BrowserRouter>
+  <Header></Header>
+    <Routes>
+      <Route path = '/' element = {<Home/>}/>
+      <Route path = '/login' element = {<Login/>}/>
+      <Route path = '/registration' element = {<Registration/>}/>
+    </Routes>
+  </BrowserRouter>
+)
 
 export default App;

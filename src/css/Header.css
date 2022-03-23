@@ -1,5 +1,11 @@
 .Header{
-    background-color: rgb(64, 152, 187);
+    min-height: 70px;
+    margin-bottom: 5%;
+}
+
+.Brand{
+    position: relative;
+    top: -2px;
 }
 
 .NavLink{
