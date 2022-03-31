@@ -19,7 +19,7 @@ const Registration = (props) => {
             setShowPasswordAlert(false)
             var form = $("#regForm");
             $.ajax({
-                url: 'http://localhost:13378/registration',         
+                url: process.env.REACT_APP_SERVER_NAME + '/registration',         
                 method: 'post',             
                 dataType: 'html',
                 credentials: "same-origin",

@@ -15,7 +15,7 @@ const Login = (props) => {
         e.preventDefault();
         var form = $("#loginForm");
         $.ajax({
-            url: 'http://localhost:13378/login',         
+            url: process.env.REACT_APP_SERVER_NAME + '/login',         
             method: 'post',             
             dataType: 'html',
             credentials: "same-origin",
@@ -23,7 +23,8 @@ const Login = (props) => {
             xhrFields:{
               withCredentials: true
             },               
-            success: function(data){   
+            success: function(data){
+                console.log(data)   
                 data = JSON.parse(data)
                 if (data.userInfo.authenticated == true){
                     props.setMailAction(data.userInfo.mail)

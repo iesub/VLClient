@@ -5,17 +5,36 @@ import { LinkContainer } from 'react-router-bootstrap'
 import '../css/Header.css'
 import $ from "jquery";
 import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { setAuthorities, setIsAuthenticated, setMail, setNickname, setIfChecked } from "../actions/AuthorizationActions";
+
+const logout = () => {
+    $.ajax({
+        url: process.env.REACT_APP_SERVER_NAME + `/logout`,         
+        method: 'get',             
+        dataType: 'html',
+        credentials: "same-origin",
+        xhrFields:{
+          withCredentials: true
+        },               
+        success: function(data){   
+            window.location.replace("/");
+        }
+      });
+    }
 
 const Header = (props) =>{
 
-var loginPath;
-var regPath;
+var loginPath
+var regPath
+var logoutComponent
+var addBookComponent
 
 $(document).ready(function(){
+    console.log(process.env.REACT_APP_SERVER_NAME)
     if (!props.user.checked){
     $.ajax({
-        url: 'http://localhost:13378/ifAuthenticated',         
+        url: process.env.REACT_APP_SERVER_NAME + `/ifAuthenticated`,         
         method: 'get',             
         dataType: 'html',
         credentials: "same-origin",
@@ -36,13 +55,22 @@ $(document).ready(function(){
     }
 })
 
-if (props.user.isAuthenticated == false){
+if (!props.user.isAuthenticated){
     loginPath = <LinkContainer  to = "/login">
                     <Nav.Link className = "NavLink">Авторизоваться</Nav.Link>
                 </LinkContainer>
     regPath = <LinkContainer  to = "/registration">
                     <Nav.Link className = "NavLink">Зарегистрироваться</Nav.Link>
               </LinkContainer>
+}
+
+if (props.user.isAuthenticated){
+    logoutComponent = <LinkContainer  to = "/">
+                    <Nav.Link onClick = {logout} className = "NavLink">Выйти</Nav.Link>
+              </LinkContainer>
+    addBookComponent = <LinkContainer  to = "/addBook">
+                        <Nav.Link className = "NavLink">Добавить книгу</Nav.Link>
+                </LinkContainer>
 }
 
 return(
@@ -60,6 +88,8 @@ return(
             </LinkContainer>
             {loginPath}
             {regPath}
+            {addBookComponent}
+            {logoutComponent}
             </Nav>
             </Navbar.Collapse>
         </Container>
