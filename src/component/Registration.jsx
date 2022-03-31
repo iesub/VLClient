@@ -12,6 +12,12 @@ const Registration = (props) => {
     let navigate = useNavigate();
 
     $(document).ready(function(e){
+
+        $("#headlineRow").css({
+            "border-bottom": "solid grey 2px",
+            "margin-bottom": "20px"
+        })
+
         $("#regForm").submit(function(e){
             e.preventDefault();
             setShowExistanceAlert(false)
@@ -29,7 +35,6 @@ const Registration = (props) => {
                 },               
                 success: function(data){   
                     data = JSON.parse(data)
-                    console.log(data)
                     if (!data.registrationData.passwordsCorrect){
                         setShowPasswordAlert(true)
                     }
@@ -49,6 +54,9 @@ const Registration = (props) => {
 
     return(
         <Container>
+            <Row id = "headlineRow">
+                <h1>Регитрация</h1>
+            </Row>
             <Row>
                 <Col xs = "3"></Col>
                 <Col xs = "6">

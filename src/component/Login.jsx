@@ -11,6 +11,12 @@ const Login = (props) => {
     let navigate = useNavigate();
 
     $(document).ready(function(){
+
+    $("#headlineRow").css({
+        "border-bottom": "solid grey 2px",
+        "margin-bottom": "20px"
+    })
+    
     $("#loginForm").submit(function(e){
         e.preventDefault();
         var form = $("#loginForm");
@@ -24,7 +30,6 @@ const Login = (props) => {
               withCredentials: true
             },               
             success: function(data){
-                console.log(data)   
                 data = JSON.parse(data)
                 if (data.userInfo.authenticated == true){
                     props.setMailAction(data.userInfo.mail)
@@ -42,6 +47,9 @@ const Login = (props) => {
 
     return(
         <Container>
+            <Row id = "headlineRow">
+                <h1>Авторизация</h1>
+            </Row>
             <Row>
                 <Col xs = "3"></Col>
                 <Col xs = "6">

@@ -23,7 +23,6 @@ const AddAuthor = (props) => {
                 },               
                 success: function(data){   
                     data = JSON.parse(data)
-                    console.log(data)
                     if (data.response == "ERROR_NAME_EMPTY"){
                         $("#AddTagError").html("Нужно обязательно заполнить это поле")
                         setShowBookTagAlert(true)

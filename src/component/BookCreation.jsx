@@ -4,6 +4,7 @@ import AddBookGenre from "./AddBookGenre"
 import AddBookTag from "./AddBookTag"
 import { useState } from "react";
 import $ from "jquery";
+import { useNavigate } from "react-router-dom";
 import Dropzone from "dropzone";
 
 const BookCreation = () => {
@@ -30,6 +31,7 @@ const BookCreation = () => {
     const [showNameExistAlert, setShowExistAlert] = useState(false);
     const handleCloseAuthor = () => setAuthorModalShow(false);
     const handleShowAuthor = () => setAuthorModalShow(true);
+    let navigate = useNavigate();
 
     const handleCloseGenre = () => setGenreModalShow(false);
     const handleShowGenre = () => setGenreModalShow(true);
@@ -116,7 +118,7 @@ const BookCreation = () => {
                 success: function(data){   
                     data = JSON.parse(data)
                     for (var i = 0; i < data.response.length; i ++){
-                        $("#tagList").append("<input style = 'margin-right: 4px;' id = 'chooseTag' name = 'tags' type = 'checkbox' value = " + data.response[i].id + ">" + "<label style = 'margin-right: 8px;'>" + data.response[i].name + "</label>")
+                        $("#tagList").append("<input style = 'margin-right: 4px;' id = 'chooseTag' type = 'checkbox' value = " + data.response[i].id + ">" + "<label style = 'margin-right: 8px;'>" + data.response[i].name + "</label>")
                     }
                 }
               })
@@ -137,6 +139,14 @@ const BookCreation = () => {
       }
 
     $(document).ready(function(){
+
+        $("#headlineRow").css({
+            "border-bottom": "solid grey 2px",
+            "margin-bottom": "20px"
+        })
+
+        $("#tagsForm").css({"display": "none"});
+
         initLogoDropper()
         initBookDropper()
         getFormReady()
@@ -151,6 +161,11 @@ const BookCreation = () => {
                 setShowBookAlertD(true)
                 return
             }
+            var tags = []
+            $("input:checkbox[id=chooseTag]:checked").each(function(){
+                tags.push($(this).val());
+            });
+            $("#tagsForm").val(tags)
             var form = $("#bookCreationForm")
             var fd = new FormData
             fd.append('dataDTO', JSON.stringify(convertFormToJSON(form)))
@@ -197,6 +212,9 @@ const BookCreation = () => {
                     }
                     if (contains(data.response, "ERROR_NAME_EXIST")){
                         setShowExistAlert(true)
+                    }
+                    if (data.response == "SUCCESS"){
+                        navigate("/", { replace: true });
                     }
                     //$("#logoPreview").attr("src", "data:image/png;base64," + data.response.logo)
                 }
@@ -245,6 +263,9 @@ const BookCreation = () => {
 
     return (
         <Container>
+            <Row id = "headlineRow">
+                <h1>Добавить книгу</h1>
+            </Row>
             <Row>
                 <Col xs = "3"></Col>
                 <Col xs = "6">
@@ -354,8 +375,10 @@ const BookCreation = () => {
                             Выберите теги.
                         </p>
                     </Alert>
-                    <div id = "tagList" name = "tags" style = {checkBox}>
+                    <div id = "tagList">
                     </div>
+                    <Form.Control id = "tagsForm" name = "tags" autoComplete="off">
+                    </Form.Control>
                     <Button variant="primary" onClick={handleShowTag}>
                     Добавить тег
                     </Button>
@@ -385,11 +408,7 @@ const BookCreation = () => {
                     Отправить
                 </Button>
                 </Form>
-                
-                <Button variant="primary" id = "imageCheck">
-                    Посмотреть картинку
-                </Button>
-
+            
                 <Modal show={showAuthor} backdrop = 'static' onHide={handleCloseAuthor}>
                     <Modal.Header closeButton>
                     <Modal.Title>Добавить автора</Modal.Title>
