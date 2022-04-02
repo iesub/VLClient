@@ -275,13 +275,13 @@ const BookCreation = () => {
                 <Form.Group className="mb-3" controlId="formAuthor">
                     <Form.Label>Название книги</Form.Label>
 
-                    <Alert variant="danger" onClose={() => setShowBookNameAlert(false)} show={showBookNameAlert}>
+                    <Alert variant="danger" show={showBookNameAlert}>
                         <p id="AddAuthorError">
                             Введите название книги.
                         </p>
                     </Alert>
 
-                    <Alert variant="danger" onClose={() => setShowExistAlert(false)} show={showNameExistAlert}>
+                    <Alert variant="danger" show={showNameExistAlert}>
                         <p id="AddAuthorError">
                             Книга с таким названием уже существует.
                         </p>
@@ -294,13 +294,13 @@ const BookCreation = () => {
                 <Form.Group className="mb-3" controlId="formAuthor">
                     <Form.Label>Обложка</Form.Label>
 
-                    <Alert variant="danger" onClose={() => setShowLogoAlert(false)} show={showLogoAlert}>
+                    <Alert variant="danger" show={showLogoAlert}>
                         <p id="AddAuthorError">
                             Убедитесь, что формат обложки - PNG.
                         </p>
                     </Alert>
 
-                    <Alert variant="danger" onClose={() => setShowLogoAlertD(false)} show={showLogoAlertD}>
+                    <Alert variant="danger" show={showLogoAlertD}>
                         <p id="AddAuthorError">
                             Загрузите обложку.
                         </p>
@@ -314,7 +314,7 @@ const BookCreation = () => {
 
                 <Form.Group className="mb-3" controlId="formAuthor">
                     <Form.Label>Дата выхода</Form.Label>
-                    <Alert variant="danger" onClose={() => setShowDateAlert(false)} show={showDateAlert}>
+                    <Alert variant="danger" show={showDateAlert}>
                         <p id="AddAuthorError">
                             Введите дату выхода книги. Формат год-месяц-число.
                         </p>
@@ -326,7 +326,7 @@ const BookCreation = () => {
                 <Form.Group className="mb-3" controlId="formAuthor">
                     <Form.Label>Описание</Form.Label>
 
-                    <Alert variant="danger" onClose={() => setShowDescriptionAlert(false)} show={showDescriptionAlert}>
+                    <Alert variant="danger"show={showDescriptionAlert}>
                         <p id="AddAuthorError">
                             Введите описание книги.
                         </p>
@@ -339,7 +339,7 @@ const BookCreation = () => {
                 <Form.Group className="mb-3" controlId="formAuthor">
                     <Form.Label>Автор</Form.Label>
                     
-                    <Alert variant="danger" onClose={() => setShowAuthorAlert(false)} show={showAuthorAlert}>
+                    <Alert variant="danger" show={showAuthorAlert}>
                         <p id="AddAuthorError">
                             Выберете автора.
                         </p>
@@ -370,7 +370,7 @@ const BookCreation = () => {
 
                 <Form.Group className="mb-3" controlId="formAuthor">
                     <Form.Label>Теги</Form.Label>
-                    <Alert variant="danger" onClose={() => setShowTagAlert(false)} show={showTagAlert}>
+                    <Alert variant="danger" show={showTagAlert}>
                         <p id="AddAuthorError">
                             Выберите теги.
                         </p>
@@ -387,13 +387,13 @@ const BookCreation = () => {
                 <Form.Group className="mb-3" controlId="formAuthor">
                     <Form.Label>Книга</Form.Label>
 
-                    <Alert variant="danger" onClose={() => setShowBookAlert(false)} show={showBookAlert}>
+                    <Alert variant="danger" show={showBookAlert}>
                         <p id="AddAuthorError">
                             Убедитесь, что формат книги - PDF.
                         </p>
                     </Alert>
 
-                    <Alert variant="danger" onClose={() => setShowBookAlertD(false)} show={showBookDAlert}>
+                    <Alert variant="danger" show={showBookDAlert}>
                         <p id="AddAuthorError">
                             Загрузите книгу.
                         </p>

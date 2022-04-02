@@ -9,6 +9,11 @@ const Registration = (props) => {
     const [showExistanceAlert, setShowExistanceAlert] = useState(false);
     const [showPasswordAlert, setShowPasswordAlert] = useState(false);
 
+    const [showMailEmptyAlert, setShowMailEmptyAlert] = useState(false);
+    const [showNicknameEmptyAlert, setShowNicknameEmptyAlert] = useState(false);
+    const [showPasswordEmptyAlert, setShowPasswordEmptyAlert] = useState(false);
+    const [showPasswordConfEmptyAlert, setShowPasswordConfEmptyAlert] = useState(false);
+
     let navigate = useNavigate();
 
     $(document).ready(function(e){
@@ -35,16 +40,26 @@ const Registration = (props) => {
                 },               
                 success: function(data){   
                     data = JSON.parse(data)
+                    console.log(data)
                     if (!data.registrationData.passwordsCorrect){
                         setShowPasswordAlert(true)
                     }
                     if (!data.registrationData.mailCorrect){
                         setShowFormatAlert(true)
                     }
-                    if (data.registrationData.mailCorrect.mailExist){
+                    if (data.registrationData.mailExist && data.registrationData.gotErrors){
                         setShowExistanceAlert(true)
                     }
-                    if (!data.registrationData.mailCorrect.mailExist){
+                    if (data.registrationData.mailEmpty){
+                        setShowMailEmptyAlert(true)
+                    }
+                    if (data.registrationData.nicknameEmpty){
+                        setShowNicknameEmptyAlert(true)
+                    }
+                    if (data.registrationData.passwordEmpty){
+                        setShowPasswordEmptyAlert(true)
+                    }
+                    if (!data.registrationData.mailExist && !data.registrationData.gotErrors){
                         navigate("/login", { replace: true });
                     }
                 }
@@ -63,29 +78,44 @@ const Registration = (props) => {
                 <Form id = "regForm">
                     
                     <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Alert id = "alert" show={showFormatAlert} variant="danger" onClose={() => setShowFormatAlert(false)} dismissible>
+                        <Alert id = "alert" show={showFormatAlert} variant="danger">
                             <p>
                                 Неверный формат почты.
                             </p>
                         </Alert>
-                        <Alert id = "alert" show={showExistanceAlert} variant="danger" onClose={() => setShowExistanceAlert(false)} dismissible>
+                        <Alert id = "alert" show={showExistanceAlert} variant="danger">
                             <p>
                                 Пользователь с такой почтой уже существует.                            
+                            </p>
+                        </Alert>
+                        <Alert id = "alert" show={showMailEmptyAlert} variant="danger">
+                            <p>
+                                Заполните это поле.                            
                             </p>
                         </Alert>
                         <Form.Label>Ваш адрес электронной почты</Form.Label>
                         <Form.Control type="email"name = "username" placeholder="example@mail.com" />
                     </Form.Group>
 
+                    <Alert id = "alert" show={showNicknameEmptyAlert} variant="danger">
+                            <p>
+                                Заполните это поле.                            
+                            </p>
+                    </Alert>
                     <Form.Group className="mb-3" controlId="formBasicNickname">
                         <Form.Label>Имя пользователя</Form.Label>
                         <Form.Control type="nickname" name = "nickname" />
                     </Form.Group>
                     
                     <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Alert id = "alert" show={showPasswordAlert} variant="danger" onClose={() => setShowPasswordAlert(false)} dismissible>
+                        <Alert id = "alert" show={showPasswordAlert} variant="danger">
                             <p>
                             Пароли должны совпадать.
+                            </p>
+                        </Alert>
+                        <Alert id = "alert" show={showPasswordEmptyAlert} variant="danger">
+                            <p>
+                                Заполните это поле.                            
                             </p>
                         </Alert>
                         <Form.Label>Пароль</Form.Label>
@@ -94,6 +124,11 @@ const Registration = (props) => {
 
                     <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
                         <Form.Label>Повторите пароль</Form.Label>
+                        <Alert id = "alert" show={showPasswordConfEmptyAlert} variant="danger">
+                            <p>
+                                Заполните это поле.                            
+                            </p>
+                        </Alert>
                         <Form.Control type="password"name = "passwordConfirm" />
                     </Form.Group>
                 

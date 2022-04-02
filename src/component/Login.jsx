@@ -55,7 +55,7 @@ const Login = (props) => {
                 <Col xs = "6">
                 <Form id = "loginForm">
                     <Form.Group>
-                    <Alert id = "alert" show={show} variant="danger" onClose={() => setShow(false)} dismissible>
+                    <Alert id = "alert" show={show} variant="danger">
                             <p>
                             Неверный логин или пароль.
                             </p>

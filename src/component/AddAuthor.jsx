@@ -51,7 +51,7 @@ const AddAuthor = (props) => {
         <Form id="authorCreationForm">
             <Form.Group className="mb-3" controlId="formAuthor">
                 <Form.Label>Имя автора</Form.Label>
-                <Form.Control type="email" name="name" autoComplete="off" />
+                <Form.Control type="text" name="name" autoComplete="off" />
             </Form.Group>
             <Button variant="primary" type="submit">
                 Отправить
