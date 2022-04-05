@@ -6,14 +6,16 @@ import { useState } from "react";
 import $ from "jquery";
 import { useNavigate } from "react-router-dom";
 import Dropzone from "dropzone";
+import preload from "../grid.svg";
+import "../css/Preload.css"
 
 const BookCreation = () => {
 
-    const checkBox = {
+    $("#tagList").css({
         overflow: 'scroll',
         height: '80px',
         'overflowX': 'hidden'
-      };
+      });
 
     const [showAuthor, setAuthorModalShow] = useState(false);
     const [showGenre, setGenreModalShow] = useState(false);
@@ -29,6 +31,7 @@ const BookCreation = () => {
     const [showBookAlert, setShowBookAlert] = useState(false);
     const [showBookDAlert, setShowBookAlertD] = useState(false);
     const [showNameExistAlert, setShowExistAlert] = useState(false);
+    const [showWait, setShowWait] = useState(false);
     const handleCloseAuthor = () => setAuthorModalShow(false);
     const handleShowAuthor = () => setAuthorModalShow(true);
     let navigate = useNavigate();
@@ -178,6 +181,7 @@ const BookCreation = () => {
             setShowGenreAlert(false)
             setShowAuthorAlert(false)
             setShowExistAlert(false)
+            setShowWait(true)
             $.ajax({
                 url: process.env.REACT_APP_SERVER_NAME + '/add/book',         
                 method: 'post',             
@@ -189,7 +193,7 @@ const BookCreation = () => {
                   withCredentials: true
                 },               
                 success: function(data){
-                    console.log(data)
+                    setShowWait(false)
                     setShowLogoAlertD(false)
                     setShowBookAlertD(false)
                     if (contains(data.response, "ERROR_DESCRIPTION_EMPTY")){
@@ -214,7 +218,7 @@ const BookCreation = () => {
                         setShowExistAlert(true)
                     }
                     if (data.response == "SUCCESS"){
-                        navigate("/", { replace: true });
+                        setShowWait(false)
                     }
                     //$("#logoPreview").attr("src", "data:image/png;base64," + data.response.logo)
                 }
@@ -436,6 +440,17 @@ const BookCreation = () => {
                     <Modal.Body>
                         <AddBookTag closePanel = {handleCloseTag} updateTagList = {getFormReady}>
                         </AddBookTag>
+                    </Modal.Body>
+                </Modal>
+
+                <Modal show={showWait} backdrop = 'static'>
+                    <Modal.Header>
+                    <Modal.Title>Подождите, ваша книга загружается...</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                    <div className="preload">
+                        <img className = "grid" src={preload} width="80" />
+                    </div>
                     </Modal.Body>
                 </Modal>
                 </Col>

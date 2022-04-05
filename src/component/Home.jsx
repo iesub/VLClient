@@ -2,7 +2,12 @@ import { Container, Row, Col, Button, Modal, Form, Alert, Pagination } from "rea
 import $ from "jquery";
 import { setInit } from "../actions/PaginationActions";
 import { connect } from "react-redux";
-import BookHomePreviewBox from "./BookHomePreviewBox";
+import { BsSearch } from "react-icons/bs"
+import preload from "../grid.svg";
+import "../css/Preload.css"
+import React, {useEffect} from "react";
+
+var searchProgress = false;
 
 const Home = (props) => {
     
@@ -68,7 +73,7 @@ const Home = (props) => {
     if (props.pagInfo.pageAmount <= 5){
         for (let number = 1; number <= props.pagInfo.pageAmount; number++) {                
             paginationItems.push(
-              <Pagination.Item key={number} active={number === active}>
+              <Pagination.Item key={number} onClick={((e) => pagTo(e, number))} active={number === active}>
                 {number}
               </Pagination.Item>
             );
@@ -114,6 +119,7 @@ const Home = (props) => {
     )
 
     const previewBooks = (data) => {
+        $("#bookList").html("")
         var rowNext = 4;
         var books = "";
         for (let i = 0; i < data.response.length; i++){
@@ -154,10 +160,80 @@ const Home = (props) => {
         )
     }
 
+    const findByNameInitial = () => {
+        if (searchProgress) {return (1)}
+        else {searchProgress = true}
+        var form = $("#BookSearchForm");
+        $.ajax({
+            url: process.env.REACT_APP_SERVER_NAME + '/get/book-by-name',         
+            method: 'post',             
+            dataType: 'html',
+            credentials: "same-origin",
+            data: {query: $('input[name="query"]').val(), offset: props.pageNumber},
+            xhrFields:{
+              withCredentials: true
+            },               
+            success: function(data){
+                data = JSON.parse(data)
+                var payload = {
+                    pageNumber: 1,
+                    pageAmount: data.response.length,
+                    checked: "true",
+                    bookName: $('input[name="query"]').val()
+                }
+                props.setInit(payload)
+                searchProgress = false
+                previewBooks(data)
+            }
+        })
+    }
+
+    const findByName = () => {
+        $.ajax({
+            url: process.env.REACT_APP_SERVER_NAME + '/get/book-by-name',         
+            method: 'post',             
+            dataType: 'html',
+            credentials: "same-origin",
+            data: {query: props.pagInfo.bookName, offset: props.pageNumber},
+            xhrFields:{
+              withCredentials: true
+            },               
+            success: function(data){
+                data = JSON.parse(data)
+                previewBooks(data)
+            }
+        })
+    }
+
+    const getBookList = () => {
+        $.ajax({
+            url: process.env.REACT_APP_SERVER_NAME + '/get/book-list',         
+            method: 'get',             
+            dataType: 'html',
+            data: {"offset": props.pagInfo.pageNumber},
+            credentials: "same-origin",
+            xhrFields:{
+              withCredentials: true
+            },               
+            success: function(data){   
+                data = JSON.parse(data)
+                previewBooks(data)
+                $(".imagePreview").css({"width": "25vmin"})
+                $(".pagination").css({"margin-top": "20px"})
+                $(".bookrow").css({"margin-top": "20px"})
+            }
+        })
+    }
+
     $(document).ready(function(){
         $("#headlineRow").css({
             "border-bottom": "solid grey 2px",
             "margin-bottom": "20px"
+        })
+
+        $("#BookSearchForm").on("submit", function(e){
+            e.preventDefault()
+            findByNameInitial()
         })
 
         if (!props.pagInfo.checked){
@@ -176,7 +252,8 @@ const Home = (props) => {
                 var payload = {
                     pageNumber: 1,
                     pageAmount: pagNumber,
-                    checked: "true"
+                    checked: "true",
+                    bookName: ""
                 }
                 props.setInit(payload)
             }
@@ -184,25 +261,11 @@ const Home = (props) => {
         }
 
         if (props.pagInfo.checked){
-            $.ajax({
-                url: process.env.REACT_APP_SERVER_NAME + '/get/book-list',         
-                method: 'get',             
-                dataType: 'html',
-                data: {"offset": props.pagInfo.pageNumber},
-                credentials: "same-origin",
-                xhrFields:{
-                  withCredentials: true
-                },               
-                success: function(data){   
-                    data = JSON.parse(data)
-                    console.log(data.response)
-                    previewBooks(data)
-                    $(".imagePreview").css({"width": "25vmin"})
-                    $(".pagination").css({"margin-top": "20px"})
-                    $(".bookrow").css({"margin-top": "20px"})
-                }
-              })
+            console.log(props.pagInfo.bookName)
+            if (props.pagInfo.bookName == ""){
+                getBookList()
             }
+        }    
     })
 
 
@@ -213,12 +276,28 @@ const Home = (props) => {
         </Row>
 
         <Row>
-            <Col xs = "4">
-
+            <Col xl = "4">
+                <Row>
+                    <Col>
+                        <Form id = "BookSearchForm" className='d-flex'>
+                        <Form.Group className="flex-fill" controlId="formBasicEmail">
+                            <Form.Control name = "query" placeholder="Введите название книги" />
+                        </Form.Group>
+                        <Button style = {{height: "38px"}} variant="primary" type="submit">
+                            <BsSearch/>
+                        </Button>
+                        </Form>
+                    </Col>
+                </Row>
+                <Row style = {{"borderBottom": "solid grey 2px",
+            "marginBottom": "20px", "marginTop": "20px"}}>
+                </Row>
             </Col>
 
-            <Col xs = "8" id = "bookList">
-                
+            <Col xl = "8" id = "bookList">
+                <div className="preload">
+                        <img className = "grid" src={preload} width="80" />
+                </div>
             </Col>
         </Row>
 

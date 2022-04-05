@@ -1,6 +1,7 @@
 export const initialState = {
     pageNumber: 1,
     pageAmount: 0,
+    bookName: null,
     checked: false
   }
     
@@ -10,7 +11,8 @@ export const initialState = {
         return {...state, 
             pageNumber: action.payload.pageNumber, 
             pageAmount: action.payload.pageAmount,
-            checked: action.payload.checked
+            checked: action.payload.checked,
+            bookName: action.payload.bookName
         }
       default:
         return state

@@ -18,7 +18,7 @@ const logout = () => {
           withCredentials: true
         },               
         success: function(data){   
-            window.location.replace("/");
+            window.location.reload("/");
         }
       });
     }
