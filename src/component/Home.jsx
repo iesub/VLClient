@@ -169,7 +169,7 @@ const Home = (props) => {
             method: 'post',             
             dataType: 'html',
             credentials: "same-origin",
-            data: {query: $('input[name="query"]').val(), offset: props.pageNumber},
+            data: {query: $('input[name="query"]').val(), offset: props.pagInfo.pageNumber},
             xhrFields:{
               withCredentials: true
             },               
@@ -194,7 +194,7 @@ const Home = (props) => {
             method: 'post',             
             dataType: 'html',
             credentials: "same-origin",
-            data: {query: props.pagInfo.bookName, offset: props.pageNumber},
+            data: {query: props.pagInfo.bookName, offset: props.pagInfo.pageNumber},
             xhrFields:{
               withCredentials: true
             },               
@@ -281,7 +281,7 @@ const Home = (props) => {
                     <Col>
                         <Form id = "BookSearchForm" className='d-flex'>
                         <Form.Group className="flex-fill" controlId="formBasicEmail">
-                            <Form.Control name = "query" placeholder="Введите название книги" />
+                            <Form.Control name = "query" autoComplete="off" placeholder="Введите название книги" />
                         </Form.Group>
                         <Button style = {{height: "38px"}} variant="primary" type="submit">
                             <BsSearch/>
