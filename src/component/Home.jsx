@@ -8,12 +8,16 @@ import { useState } from "react";
 
 var searchProgress = false;
 var bookName = "";
+var tags = null
+var author = null;
+var genre = null;
 
 const Home = (props) => {
 
     var paginationItems = []
     const [pagItems, setPagItems] = useState([])
     const [updateState, setUpdateState] = useState(false)
+    const [filterState, setFilterState] = useState(false)
     var beforeEllipsis = false;
     var afterEllipsis = false;
     var activePag = 1;
@@ -50,6 +54,10 @@ const Home = (props) => {
         pagMoveUpdate()
     }
     
+    const setUpdateStateFunc = (state) => {
+        setUpdateState = state
+    }
+
     const drawPag = () => {
 
         console.log(amountPag)
@@ -127,6 +135,14 @@ const Home = (props) => {
             "margin-bottom": "20px"
         })
 
+        $("#bookList").css({
+            "margin-top": "10px"
+        })
+
+        $("#filtersList").css({
+            "margin-top": "10px"
+        })
+
         $(".selectDiv").css({
             overflow: 'scroll',
             height: '100px',
@@ -137,9 +153,16 @@ const Home = (props) => {
     })
 
     const updateList = () => {
+        console.log(updateState)
+        console.log(author)
+        console.log(genre)
         if (!updateState){
+        if (author == null && genre == null && tags == null){
             findByName(bookName)
-        }
+        } else if (author != null || genre != null || tags != null ){
+            findByFilters()
+            }
+        } 
         setUpdateState(true)
     }
 
@@ -199,8 +222,7 @@ const Home = (props) => {
             },               
             success: function(data){
                 data = JSON.parse(data)
-                //var pagNumber = Math.ceil(data.responseCount / 20)
-                amountPag = data.responseCount
+                amountPag = Math.ceil(data.responseCount / 20)
                 if (amountPag==0){
                     $("#bookList").html("")
                     $("#bookList").append(
@@ -210,15 +232,45 @@ const Home = (props) => {
                 }
                 searchProgress = false
                 drawPag()
-                getAuthors()
-                getGenres()
-                getTags()
                 previewBooks(data)
                 }
         })
     }
 
-    const getAuthors = () => {
+    const findByFilters = () => {
+        if (searchProgress) {return (1)}
+        else {searchProgress = true}
+        $.ajax({
+            url: process.env.REACT_APP_SERVER_NAME + '/get/book-by-filter',         
+            method: 'post',             
+            dataType: 'html',
+            credentials: "same-origin",
+            data: {author: author, genre: genre, tag: tags,offset: activePag},
+            xhrFields:{
+              withCredentials: true
+            },               
+            success: function(data){
+                data = JSON.parse(data)
+                console.log(data)
+                amountPag = Math.ceil(data.responseCount / 20)
+                if (amountPag==0){
+                    $("#bookList").html("")
+                    $("#bookList").append(
+                        "<h5 class = 'text-center'> По вашему запросу ничего не найдено. </h5>"
+                    )
+                    return
+                }
+                searchProgress = false
+                drawPag()
+                previewBooks(data)
+                },
+            error: function(error){
+                searchProgress = false
+            }
+        })
+    }
+
+    if (!filterState){
         $("#authors").html("")
         $.ajax({
             url: process.env.REACT_APP_SERVER_NAME + '/get/authors',         
@@ -238,9 +290,7 @@ const Home = (props) => {
                 }
             }
           })
-        }
 
-        const getGenres = () => {
           $("#genre").html("")
           $.ajax({
               url: process.env.REACT_APP_SERVER_NAME + '/get/book-genres',         
@@ -260,9 +310,7 @@ const Home = (props) => {
                   }
               }
             })
-        }
-
-        const getTags = () => {
+        
             $("#tags").html("")
             $.ajax({
                 url: process.env.REACT_APP_SERVER_NAME + '/get/book-tags',         
@@ -282,8 +330,9 @@ const Home = (props) => {
                     }
                 }
               })
-        }
-
+        setFilterState(true)
+    }
+    
     return(
     <Container>
         <Row id = "headlineRow">
@@ -291,7 +340,7 @@ const Home = (props) => {
         </Row>
 
         <Row>
-            <Col xl = "4">
+            <Col xl = "4" id = "filtersList">
                 <Row>
                     <Col>
                         <Form onSubmit = {(e) => {
@@ -336,8 +385,34 @@ const Home = (props) => {
                             
                             </div>
                         </Form.Group>
-                        <Button variant="primary" type="submit">
+                        <Button variant="primary" type="button" onClick = {() => {
+                            if ($("input:radio[name=author]:checked") == null 
+                            && $("input:radio[name=genre]:checked") == null 
+                            && $("input:checkbox[name=tag]:checked") == null) {return}
+                            bookName = ""
+                            tags = []
+                            $("input:checkbox[name=tag]:checked").each(function(){
+                                tags.push($(this).val());
+                            });
+                            author = $("input:radio[name=author]:checked").val()
+                            genre = $("input:radio[name=genre]:checked").val()
+                            findByFilters()         
+                        }}>
                             Применить фильтры
+                        </Button>
+
+                        <Button variant="primary" type="button" onClick = {() => {
+                            tags = null
+                            $("input:checkbox[name=tag]:checked").each(function(){
+                                $(this).prop("checked", false)
+                            });
+                            author = null
+                            genre = null
+                            $("input:radio[name=author]:checked").prop("checked", false)
+                            $("input:radio[name=genre]:checked").prop("checked", false)
+                            findByName("")
+                        }}>
+                            Очистить фильтры
                         </Button>
                         </Form>
                     </Col>
