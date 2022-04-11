@@ -5,6 +5,7 @@ import preload from "../grid.svg";
 import "../css/Preload.css"
 import React, {useEffect} from "react";
 import { useState } from "react";
+import ModalBookShow from "./ModalBookShow";
 
 var searchProgress = false;
 var bookName = "";
@@ -15,14 +16,21 @@ var genre = null;
 const Home = (props) => {
 
     var paginationItems = []
+    var bookPrev = []
     const [pagItems, setPagItems] = useState([])
+    const [modalPreview, setModalPreview] = useState([])
+    const [bookPreview, setBookPreview] = useState([])
     const [updateState, setUpdateState] = useState(false)
     const [filterState, setFilterState] = useState(false)
     var beforeEllipsis = false;
     var afterEllipsis = false;
     var activePag = 1;
     var amountPag;
-    
+
+    useEffect(() => {
+        
+    })
+
     const pagMoveUpdate = () => {
         drawPag()
         setUpdateState(false)
@@ -60,8 +68,9 @@ const Home = (props) => {
 
     const drawPag = () => {
 
-        console.log(amountPag)
         paginationItems = []
+        beforeEllipsis = false
+        afterEllipsis = false
 
         paginationItems.push(
             <Pagination.First key = {"first"} onClick={pagToFirst}/>
@@ -77,7 +86,7 @@ const Home = (props) => {
             )
         }
     
-        if (activePag <= 5){
+        if (amountPag <= 5){
             for (let number = 1; number <= amountPag; number++) {                
                 paginationItems.push(
                   <Pagination.Item key={number} onClick={((e) => pagTo(e, number))} active={number === activePag}>
@@ -87,9 +96,9 @@ const Home = (props) => {
             }
         }
     
-        if (activePag > 5){
+        if (amountPag > 5){
             for (let number = 1; number <= amountPag; number++) {
-                if (number <= activePag - 3 && !beforeEllipsis){              
+                if (number <= activePag - 3 && !beforeEllipsis){          
                 paginationItems.push(
                     <Pagination.Ellipsis key = {"el1"}/>
                 );
@@ -143,6 +152,10 @@ const Home = (props) => {
             "margin-top": "10px"
         })
 
+        $(".moreButton").css({
+            "margin-bottom": "5px"
+        })
+
         $(".selectDiv").css({
             overflow: 'scroll',
             height: '100px',
@@ -153,9 +166,6 @@ const Home = (props) => {
     })
 
     const updateList = () => {
-        console.log(updateState)
-        console.log(author)
-        console.log(genre)
         if (!updateState){
         if (author == null && genre == null && tags == null){
             findByName(bookName)
@@ -167,50 +177,71 @@ const Home = (props) => {
     }
 
     const previewBooks = (data) => {
-        $("#bookList").html("")
-        var rowNext = 4;
-        var books = "";
-        for (let i = 0; i < data.response.length; i++){
-            if (rowNext == 0){
-                books = books.concat(
-                    "</div>"
-                )
+        setBookPreview([])
+        $("#preload").hide(50)
+        console.log(data)
+        bookPrev = []
+        var value = data
+        for (let j = 0; j < data.response.length; j){
+        var bookRow = []
+        j += 4;
+        for (let i = 0; i < j; i++){
+            if (value.response[i] == null){       
+                continue
             }
-            if (rowNext == 4){
-                books = books.concat(
-                    "<div class = 'row bookrow'>"
-                )
-                rowNext = 0
+            var date = new Date(value.response[i].releaseDate);
+            var dateString = date.toLocaleDateString(date);
+            var tags = "";
+            for (let j = 0; j < value.response[i].tags.length; j++){
+                if (j+1 != value.response[i].tags.length){
+                    tags += value.response[i].tags[j].name + ", "
+                } else {
+                    tags += value.response[i].tags[j].name
+                }
             }
-            var date = new Date(data.response[i].releaseDate);
-            var dateString = date.toLocaleDateString();
-            books = books.concat(
-                "<div class = 'col-sm-3'>" +
-                "<div class = 'row'> <img class = 'imagePreview' src = 'data:image/png;base64," + data.response[i].logo + "'/> </div>" +
-                "<div class = 'row'> <label><strong>Название: </strong>" + data.response[i].name + "</label> </div>" +
-                "<div class = 'row'> <label><strong>Автор: </strong>" + data.response[i].author.name + "</label> </div>" +
-                "<div class = 'row'> <label><strong>Жанр: </strong>" + data.response[i].bookGenre.name + "</label> </div>" +
-                "<div class = 'row'> <label><strong>Дата выхода: </strong>" + dateString + "</label> </div>" +
-                "</div>"
+
+            bookRow.push(
+                <Col xl = "3" key = {'col' + Math.random() * (100 - 1) + 1}>
+                    <Row>
+                        <img className = 'img-fluid imagePreview' src = {"data:image/png;base64," + value.response[i].logo}/>
+                    </Row>
+                    <Row>
+                        <p> <strong>Название: </strong> {value.response[i].name} </p>
+                    </Row>
+                    <Row>
+                        <p> <strong>Автор: </strong> {value.response[i].author.name} </p>
+                    </Row>
+                    <Row>
+                        <p> <strong>Жанр: </strong> {value.response[i].bookGenre.name} </p>
+                    </Row>
+                    <Row>
+                        <p> <strong>Дата выхода: </strong>{dateString} </p>
+                    </Row>
+                    <Row>
+                        <Button className = "moreButton" variant="primary" onClick = {() => {
+                            var modItems = [] 
+                            modItems.push(
+                                <ModalBookShow key = { Math.random() * (100 - 1) + 1} value = {value.response[i]} tags = {tags} dateString = {dateString} i = {i}/>
+                            )
+                            setModalPreview(modItems)
+                        }}>Подробнее</Button>
+                    </Row>
+                </Col>           
             )
-            rowNext+=1
         }
-        if (rowNext!=0){
-            books.concat(
-                "</div>"
-            )
-        }
-       books = books.concat(
-            "</div>"
-       )
-        $("#bookList").append(
-            books
+        bookPrev.push(
+            <Row key = {"rowBook" + Math.random() * (100 - 1) + 1}>
+                {bookRow}
+            </Row>
         )
+    }
+        setBookPreview(bookPrev)
     }
 
     const findByName = (name) => {
         if (searchProgress) {return (1)}
         else {searchProgress = true}
+        $("#preload").show(50)
         $.ajax({
             url: process.env.REACT_APP_SERVER_NAME + '/get/book-by-name',         
             method: 'post',             
@@ -228,6 +259,7 @@ const Home = (props) => {
                     $("#bookList").append(
                         "<h5 class = 'text-center'> По вашему запросу ничего не найдено. </h5>"
                     )
+                    searchProgress = false
                     return
                 }
                 searchProgress = false
@@ -240,6 +272,7 @@ const Home = (props) => {
     const findByFilters = () => {
         if (searchProgress) {return (1)}
         else {searchProgress = true}
+        $("#preload").show(50)
         $.ajax({
             url: process.env.REACT_APP_SERVER_NAME + '/get/book-by-filter',         
             method: 'post',             
@@ -258,6 +291,7 @@ const Home = (props) => {
                     $("#bookList").append(
                         "<h5 class = 'text-center'> По вашему запросу ничего не найдено. </h5>"
                     )
+                    searchProgress = false
                     return
                 }
                 searchProgress = false
@@ -396,6 +430,7 @@ const Home = (props) => {
                             });
                             author = $("input:radio[name=author]:checked").val()
                             genre = $("input:radio[name=genre]:checked").val()
+                            setBookPreview([])
                             findByFilters()         
                         }}>
                             Применить фильтры
@@ -410,6 +445,7 @@ const Home = (props) => {
                             genre = null
                             $("input:radio[name=author]:checked").prop("checked", false)
                             $("input:radio[name=genre]:checked").prop("checked", false)
+                            setBookPreview([])
                             findByName("")
                         }}>
                             Очистить фильтры
@@ -419,10 +455,11 @@ const Home = (props) => {
                 </Row>
             </Col>
 
-            <Col xl = "8" id = "bookList">
-                <div className="preload">
+            <Col xl = "8" id = "bookList" key = "booklistkey">
+                <div className="preload" id = "preload">
                         <img className = "grid" src={preload} width="80" />
                 </div>
+                {bookPreview}
             </Col>
         </Row>
 
@@ -432,6 +469,9 @@ const Home = (props) => {
                     {pagItems}
                 </Pagination>
             </Col>
+        </Row>
+        <Row>
+            {modalPreview}
         </Row>
     </Container>
     )

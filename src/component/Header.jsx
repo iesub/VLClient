@@ -65,9 +65,7 @@ if (!props.user.isAuthenticated){
 }
 
 if (props.user.isAuthenticated){
-    logoutComponent = <LinkContainer  to = "/">
-                    <Nav.Link onClick = {logout} className = "NavLink">Выйти</Nav.Link>
-              </LinkContainer>
+    logoutComponent = <Nav.Link onClick = {logout} className = "NavLink">Выйти</Nav.Link>
     addBookComponent = <LinkContainer  to = "/addBook">
                         <Nav.Link className = "NavLink">Добавить книгу</Nav.Link>
                 </LinkContainer>

@@ -413,7 +413,7 @@ const BookCreation = () => {
                 </Button>
                 </Form>
             
-                <Modal show={showAuthor} backdrop = 'static' onHide={handleCloseAuthor}>
+                <Modal show={showAuthor} backdrop = 'static' onHide={handleCloseAuthor} centered>
                     <Modal.Header closeButton>
                     <Modal.Title>Добавить автора</Modal.Title>
                     </Modal.Header>
@@ -423,7 +423,7 @@ const BookCreation = () => {
                     </Modal.Body>
                 </Modal>
 
-                <Modal show={showGenre} backdrop = 'static' onHide={handleCloseGenre}>
+                <Modal show={showGenre} backdrop = 'static' onHide={handleCloseGenre} centered>
                     <Modal.Header closeButton>
                     <Modal.Title>Добавить жанр</Modal.Title>
                     </Modal.Header>
@@ -433,7 +433,7 @@ const BookCreation = () => {
                     </Modal.Body>
                 </Modal>
 
-                <Modal show={showTag} backdrop = 'static' onHide={handleCloseTag}>
+                <Modal show={showTag} backdrop = 'static' onHide={handleCloseTag} centered>
                     <Modal.Header closeButton>
                     <Modal.Title>Добавить жанр</Modal.Title>
                     </Modal.Header>
@@ -443,7 +443,7 @@ const BookCreation = () => {
                     </Modal.Body>
                 </Modal>
 
-                <Modal show={showWait} backdrop = 'static'>
+                <Modal show={showWait} backdrop = 'static' centered>
                     <Modal.Header>
                     <Modal.Title>Подождите, ваша книга загружается...</Modal.Title>
                     </Modal.Header>
