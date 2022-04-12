@@ -6,6 +6,7 @@ import Home from "./component/Home";
 import Login from "./component/Login";
 import Registration from "./component/Registration"
 import BookCreation from "./component/BookCreation";
+import BookRead from "./component/BookRead";
 
 
 const App = () => (
@@ -16,6 +17,7 @@ const App = () => (
       <Route path = '/login' element = {<Login/>}/>
       <Route path = '/registration' element = {<Registration/>}/>
       <Route path = '/addBook' element = {<BookCreation/>}/>
+      <Route path = '/readBook/:id' element = {<BookRead/>}/>
     </Routes>
   </BrowserRouter>
 )

@@ -179,7 +179,6 @@ const Home = (props) => {
     const previewBooks = (data) => {
         setBookPreview([])
         $("#preload").hide(50)
-        console.log(data)
         bookPrev = []
         var value = data
         for (let j = 0; j < data.response.length; j){
@@ -446,7 +445,7 @@ const Home = (props) => {
                             $("input:radio[name=author]:checked").prop("checked", false)
                             $("input:radio[name=genre]:checked").prop("checked", false)
                             setBookPreview([])
-                            findByName("")
+                            findByName(bookName)
                         }}>
                             Очистить фильтры
                         </Button>

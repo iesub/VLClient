@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Row, Col,Modal} from "react-bootstrap"
+import { LinkContainer } from 'react-router-bootstrap'
+import { Row, Col, Modal, Nav, Button} from "react-bootstrap"
+import $ from "jquery";
 
 const ModalBookShow = (props) => {
     const [showBookModal, setShowBookModal] = useState(true)
@@ -7,6 +9,12 @@ const ModalBookShow = (props) => {
     const hide = () => {
         setShowBookModal(false)
     }
+
+    $(document).ready(function(){
+        $(".rerouteButton").css({
+            "color": "white"
+        })
+    })
 
     return (
         <Modal key = {'modal' + props.i} id = {'modal' + props.i} onHide = {hide} show = {showBookModal} backdrop = 'static' centered size="lg">
@@ -37,6 +45,17 @@ const ModalBookShow = (props) => {
         <strong>Теги: </strong>
         <label> {props.tags} </label>
         </Col>
+        </Row>
+        <Row>
+            <Col xl = "4"></Col>
+            <Col xl = "4">
+                <Row>
+                    <LinkContainer to = {"/readBook/"+props.value.id}>
+                        <Button className = "readButton text-center" variant="primary">Читать</Button>        
+                    </LinkContainer>
+                </Row>
+            </Col>
+            <Col xl = "4"></Col>
         </Row>
         </Modal.Body>
     </Modal>
