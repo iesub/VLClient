@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Col, Container, Row, Form, Button} from "react-bootstrap";
+import { Col, Container, Row, Form, Button, Modal} from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import $ from "jquery";
 import preload from "../grid.svg";
 import "../css/Preload.css"
 import { BsFillCaretLeftFill,  BsFillCaretRightFill} from "react-icons/bs"
+import { LinkContainer } from 'react-router-bootstrap'
 
 const BookRead = (props) => {
 
@@ -13,6 +14,9 @@ const BookRead = (props) => {
     const [pagesCounted, setPagesCounted] = useState(false)
     const [choosePage, setChoosePage] = useState([])
     const [pageImg, setPageImg] = useState([])
+    const [chooseShelfToAdd, setChooseShelfToAdd] = useState([])
+    const [modalShow, setModalShow] = useState(false)
+    const [modalBody, setModalBody] = useState("")
     let { id } = useParams();
 
     $(document).ready(function(){
@@ -101,6 +105,7 @@ const BookRead = (props) => {
                 }
                 $("#bookTags").html(tags)
                 loadPage(currentPage)
+                loadShelfList()
             }
         })
     }
@@ -124,6 +129,91 @@ const BookRead = (props) => {
                     <img key = {Math.random() * (100 - 1) + 1} className = 'img-fluid imagePreview' src = {"data:image/png;base64," + data.response.pagePicture}/>
                 )
                 setPageImg(pageImgT)
+            }
+        })
+    }
+
+    const loadShelfList = () => {
+        setChooseShelfToAdd([])
+        $.ajax({
+            url: process.env.REACT_APP_SERVER_NAME + '/get/shelves',         
+            method: 'get',             
+            dataType: 'html',
+            credentials: "same-origin",
+            data: {},
+            xhrFields:{
+              withCredentials: true
+            },               
+            success: function(data){
+                data = JSON.parse(data)
+                var options = []
+                var finalResult = []
+                if (data.response.length == 0){
+                    finalResult.push(
+                        <Row key = {"shelfChooseRow" + Math.random() * (100 - 1) + 1} className="">
+                            <Col xl = "8">
+                                <span className="align-middle">У вас нет полок. Пора создать одну.</span>
+                            </Col>
+                            <Col xl = "4" className="d-grid gap-2">
+                            <LinkContainer to = {"/bookShelves"}>
+                                <Button className = "readButton text-center" variant="primary">Создать</Button>        
+                            </LinkContainer>
+                            </Col>
+                        </Row>
+                    )
+                } else {
+                    for (let i = 0; i < data.response.length; i++){
+                        options.push(
+                            <option key = {"shelfChooseOption" + Math.random() * (100 - 1) + 1} value = {data.response[i].id}> {data.response[i].name} </option>
+                        )
+                    }
+                    finalResult.push(
+                        <Row key = {"shelfChooseRow" + Math.random() * (100 - 1) + 1}>
+                            <Col xl = "1"></Col>
+                            <Col xl = "10">
+                            <Form id = "bookAddToShelf" className="d-flex" onSubmit={(e) => {
+                                e.preventDefault()
+                                addBookToShelf()
+                            }}>
+                                <Form.Group className="flex-fill">
+                                    <Form.Select id = "shelfChoose" name = "id">
+                                        {options}
+                                    </Form.Select>
+                                </Form.Group>
+                                <Button type = "submit">
+                                    Добавить
+                                </Button>
+                            </Form>
+                            </Col>
+                            <Col xl = "1"></Col>
+                        </Row>
+                    )
+                }
+                setChooseShelfToAdd(finalResult)
+            }
+        })
+    }
+
+    const addBookToShelf = () => {
+        var bookID = id
+        $.ajax({
+            url: process.env.REACT_APP_SERVER_NAME + '/add/book-to-shelf',         
+            method: 'post',             
+            dataType: 'html',
+            credentials: "same-origin",
+            data: {bookId: bookID, shelfId: $("#shelfChoose").val()},
+            xhrFields:{
+              withCredentials: true
+            },               
+            success: function(data){
+                data = JSON.parse(data)
+                setModalBody("")
+                if (data.response == "ALREADY_ON_SHELF"){
+                    setModalBody("Такая книга уже есть в выбранной полке. Попробуйте сменить выбранную Вами полку.")
+                } else {
+                    setModalBody("Успех. Книга добавлена на полку!")
+                }
+                setModalShow(true)
             }
         })
     }
@@ -205,8 +295,17 @@ const BookRead = (props) => {
                     <Row>
                         <label><strong>Добавьте книгу к своей коллекции!</strong></label>
                     </Row>
+                    {chooseShelfToAdd}
                 </Col>
             </Row>
+            <Modal show = {modalShow} centered onHide = {() => {
+                setModalShow(false)
+            }}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Добавление книги на полку</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{modalBody}</Modal.Body>
+            </Modal>
         </Container>
     )
 }

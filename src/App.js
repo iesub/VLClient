@@ -7,6 +7,8 @@ import Login from "./component/Login";
 import Registration from "./component/Registration"
 import BookCreation from "./component/BookCreation";
 import BookRead from "./component/BookRead";
+import ShelfList from "./component/ShelfList";
+import ShelfBooks from "./component/ShelfBooks";
 
 
 const App = () => (
@@ -18,6 +20,8 @@ const App = () => (
       <Route path = '/registration' element = {<Registration/>}/>
       <Route path = '/addBook' element = {<BookCreation/>}/>
       <Route path = '/readBook/:id' element = {<BookRead/>}/>
+      <Route path = '/bookShelves' element = {<ShelfList></ShelfList>}/>
+      <Route path = '/bookShelf/:id' element = {<ShelfBooks></ShelfBooks>}/>
     </Routes>
   </BrowserRouter>
 )

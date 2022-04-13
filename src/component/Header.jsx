@@ -29,6 +29,7 @@ var loginPath
 var regPath
 var logoutComponent
 var addBookComponent
+var shelfListComponent
 
 $(document).ready(function(){
     console.log(process.env.REACT_APP_SERVER_NAME)
@@ -69,6 +70,9 @@ if (props.user.isAuthenticated){
     addBookComponent = <LinkContainer  to = "/addBook">
                         <Nav.Link className = "NavLink">Добавить книгу</Nav.Link>
                 </LinkContainer>
+    shelfListComponent = <LinkContainer  to = "/bookShelves">
+                            <Nav.Link className = "NavLink">Ваши книжные полки</Nav.Link>
+                        </LinkContainer>
 }
 
 return(
@@ -86,6 +90,7 @@ return(
             </LinkContainer>
             {loginPath}
             {regPath}
+            {shelfListComponent}
             {addBookComponent}
             {logoutComponent}
             </Nav>
