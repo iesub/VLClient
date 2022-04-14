@@ -86,6 +86,7 @@ const BookCreation = () => {
             },               
             success: function(data){   
                 data = JSON.parse(data)
+                $("#authorList").append("<option value = ''></option>")
                 for (var i = 0; i < data.response.length; i ++){
                     $("#authorList").append("<option value = " + data.response[i].id + ">" + data.response[i].name + "</option>")
                 }
@@ -103,6 +104,7 @@ const BookCreation = () => {
               },               
               success: function(data){   
                   data = JSON.parse(data)
+                  $("#genreList").append("<option value = ''></option>")
                   for (var i = 0; i < data.response.length; i ++){
                       $("#genreList").append("<option value = " + data.response[i].id + ">" + data.response[i].name + "</option>")
                   }
