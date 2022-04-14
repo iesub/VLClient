@@ -9,21 +9,43 @@ import BookCreation from "./component/BookCreation";
 import BookRead from "./component/BookRead";
 import ShelfList from "./component/ShelfList";
 import ShelfBooks from "./component/ShelfBooks";
+import { connect } from "react-redux";
 
 
-const App = () => (
-  <BrowserRouter>
-  <Header></Header>
-    <Routes>
-      <Route path = '/' element = {<Home/>}/>
-      <Route path = '/login' element = {<Login/>}/>
-      <Route path = '/registration' element = {<Registration/>}/>
-      <Route path = '/addBook' element = {<BookCreation/>}/>
-      <Route path = '/readBook/:id' element = {<BookRead/>}/>
-      <Route path = '/bookShelves' element = {<ShelfList></ShelfList>}/>
-      <Route path = '/bookShelf/:id' element = {<ShelfBooks></ShelfBooks>}/>
-    </Routes>
-  </BrowserRouter>
-)
+const App = (props) => {
+  
+  var routes = []
 
-export default App;
+  if (props.user.checked){
+    routes.push(
+      <>
+        <Route key = {"route" + Math.random() * (100 - 1) + 1} path = '/' element = {<Home/>}/>
+        <Route key = {"route" + Math.random() * (100 - 1) + 1} path = '/login' element = {<Login/>}/>
+        <Route key = {"route" + Math.random() * (100 - 1) + 1} path = '/registration' element = {<Registration/>}/>
+        <Route key = {"route" + Math.random() * (100 - 1) + 1} path = '/addBook' element = {<BookCreation/>}/>
+        <Route key = {"route" + Math.random() * (100 - 1) + 1} path = '/readBook/:id' element = {<BookRead/>}/>
+        <Route key = {"route" + Math.random() * (100 - 1) + 1} path = '/bookShelves' element = {<ShelfList></ShelfList>}/>
+        <Route key = {"route" + Math.random() * (100 - 1) + 1} path = '/bookShelf/:id' element = {<ShelfBooks></ShelfBooks>}/>
+      </>
+    )
+  }
+  
+  return(
+    <BrowserRouter>
+    <Header></Header>
+      <Routes>
+        {routes}
+      </Routes>
+    </BrowserRouter>
+  )
+}
+
+const mapStateToProps = (store) => {
+  return {
+      user: store.user
+  }
+}
+
+export default connect(
+  mapStateToProps
+)(App);

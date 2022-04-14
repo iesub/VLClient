@@ -6,6 +6,8 @@ import "../css/Preload.css"
 import React, {useEffect} from "react";
 import { useState } from "react";
 import ModalBookShow from "./ModalBookShow";
+import {BsFillTrashFill} from "react-icons/bs"
+import { connect } from "react-redux";
 
 var searchProgress = false;
 var bookName = "";
@@ -22,6 +24,7 @@ const Home = (props) => {
     const [bookPreview, setBookPreview] = useState([])
     const [updateState, setUpdateState] = useState(false)
     const [filterState, setFilterState] = useState(false)
+    const [showWait, setShowWait] = useState(false)
     var beforeEllipsis = false;
     var afterEllipsis = false;
     var activePag = 1;
@@ -165,6 +168,15 @@ const Home = (props) => {
         updateList()
     })
 
+    const findAuthority = (list, authorityName) => {
+        for (let i = 0; i < list.length; i++){
+            if (list[i].authority == authorityName){
+                return true
+            }
+        }
+        return false
+    }
+
     const updateList = () => {
         if (!updateState){
         if (author == null && genre == null && tags == null){
@@ -198,7 +210,30 @@ const Home = (props) => {
                     tags += value.response[i].tags[j].name
                 }
             }
-
+            var deleteButton = []
+            if (findAuthority(props.user.authorities, "ROLE_ADMINISTRATOR")){
+                deleteButton.push(
+                    <Button key = {'deleteButton' + Math.random() * (100 - 1) + 1} variant="danger" className = "moreButton" onClick = {() => {
+                        setShowWait(true)
+                        $.ajax({
+                            url: process.env.REACT_APP_SERVER_NAME + '/delete/book',         
+                            method: 'post',             
+                            dataType: 'html',
+                            credentials: "same-origin",
+                            data: {bookId: data.response[i].id},
+                            xhrFields:{
+                              withCredentials: true
+                            },               
+                            success: function(data){
+                                setShowWait(false)
+                                setUpdateState(false)
+                            }
+                        })
+                    }}>
+                        <BsFillTrashFill />
+                    </Button>
+                )
+            }
             bookRow.push(
                 <Col xl = "3" key = {'col' + Math.random() * (100 - 1) + 1}>
                     <Row>
@@ -217,13 +252,14 @@ const Home = (props) => {
                         <p> <strong>Дата выхода: </strong>{dateString} </p>
                     </Row>
                     <Row>
-                        <Button className = "moreButton" variant="primary" onClick = {() => {
+                        <Button variant="primary" className = "moreButton" onClick = {() => {
                             var modItems = [] 
                             modItems.push(
-                                <ModalBookShow key = { Math.random() * (100 - 1) + 1} value = {value.response[i]} tags = {tags} dateString = {dateString} i = {i}/>
+                                <ModalBookShow  key = { Math.random() * (100 - 1) + 1} value = {value.response[i]} tags = {tags} dateString = {dateString} i = {i}/>
                             )
                             setModalPreview(modItems)
                         }}>Подробнее</Button>
+                        {deleteButton}
                     </Row>
                 </Col>           
             )
@@ -472,8 +508,27 @@ const Home = (props) => {
         <Row>
             {modalPreview}
         </Row>
+        <Modal show={showWait} backdrop = 'static' centered>
+                <Modal.Header>
+                <Modal.Title>Книга удаляется...</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                <div className="preload">
+                    <img className = "grid" src={preload} width="80" />
+                </div>
+                </Modal.Body>
+        </Modal>
     </Container>
     )
 }
 
-export default Home
+
+const mapStateToProps = (store) => {
+    return {
+        user: store.user
+    }
+}
+  
+export default connect(
+    mapStateToProps
+)(Home)

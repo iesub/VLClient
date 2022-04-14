@@ -32,3 +32,10 @@ export const setIfChecked = (value) => {
         payload: value
     }
 }
+
+export const initUser = (value) => {
+    return{
+        type: "INIT",
+        payload: value
+    }
+}

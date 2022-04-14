@@ -6,15 +6,16 @@ import preload from "../grid.svg";
 import "../css/Preload.css"
 import ModalBookShow from "./ModalBookShow";
 import {BsFillTrashFill} from "react-icons/bs"
+import { connect } from "react-redux";
 
-const ShelfBooks = () => {
+const ShelfBooks = (props) => {
     
     const [shelfInfoGot, setShelfInfoGot] = useState(false)
     let { id } = useParams();
     const [bookPreview, setBookPreview] = useState([])
     const [modalPreview, setModalPreview] = useState([])
 
-    if (!shelfInfoGot){
+    if (!shelfInfoGot && props.user.isAuthenticated){
         $.ajax({
             url: process.env.REACT_APP_SERVER_NAME + '/get/shelf',         
             method: 'get',             
@@ -164,4 +165,12 @@ const ShelfBooks = () => {
 }
 
 
-export default ShelfBooks
+const mapStateToProps = (store) => {
+    return {
+        user: store.user
+    }
+}
+  
+export default connect(
+    mapStateToProps
+)(ShelfBooks)

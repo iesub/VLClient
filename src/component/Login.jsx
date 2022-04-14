@@ -1,6 +1,6 @@
 import { Col, Container, Form, Row, Button, Alert } from "react-bootstrap";
 import $ from "jquery";
-import { setAuthorities, setIsAuthenticated, setMail, setNickname } from "../actions/AuthorizationActions";
+import { initUser } from "../actions/AuthorizationActions";
 import { connect } from "react-redux";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -32,10 +32,13 @@ const Login = (props) => {
             success: function(data){
                 data = JSON.parse(data)
                 if (data.userInfo.authenticated == true){
-                    props.setMailAction(data.userInfo.mail)
-                    props.setIsAuthenticatedAction(data.userInfo.authenticated)
-                    props.setAuthoritiesAction(data.userInfo.authorities)
-                    props.setNicknameAction(data.userInfo.nickname)
+                    props.setInitAction({
+                        checked: true,
+                        mail: data.userInfo.mail,
+                        nickname: data.userInfo.nickname,
+                        authorities: data.userInfo.authorities,
+                        isAuthenticated: data.userInfo.authenticated
+                    })
                     navigate("/", { replace: true });
                 } else {
                     setShow(true)
@@ -93,10 +96,7 @@ const mapStateToProps = (store) => {
   
 var mapDispatchToProps = dispatch => {
     return {
-      setIsAuthenticatedAction: payload => dispatch(setIsAuthenticated(payload)),
-      setMailAction: payload => dispatch(setMail(payload)),
-      setNicknameAction: payload => dispatch(setNickname(payload)),
-      setAuthoritiesAction: payload => dispatch(setAuthorities(payload))
+        setInitAction: payload => dispatch(initUser(payload))
     }
 }
 

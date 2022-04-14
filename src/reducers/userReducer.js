@@ -18,6 +18,15 @@ export function userReducer(state = initialState, action) {
       return {...state, authorities: action.payload}
     case "SET_IF_CHECKED":
       return {...state, checked: action.payload}
+    case "INIT":
+      return {
+        ...state,
+        checked: action.payload.checked,
+        isAuthenticated: action.payload.isAuthenticated,
+        mail: action.payload.mail,
+        nickname: action.payload.nickname,
+        authorities: action.payload.authorities
+      }
     default:
       return state
   }

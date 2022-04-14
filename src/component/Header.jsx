@@ -6,7 +6,8 @@ import '../css/Header.css'
 import $ from "jquery";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setAuthorities, setIsAuthenticated, setMail, setNickname, setIfChecked } from "../actions/AuthorizationActions";
+import { initUser } from "../actions/AuthorizationActions";
+import { useEffect } from 'react';
 
 const logout = () => {
     $.ajax({
@@ -25,14 +26,21 @@ const logout = () => {
 
 const Header = (props) =>{
 
+var navigate = useNavigate();
+
 var loginPath
 var regPath
 var logoutComponent
 var addBookComponent
 var shelfListComponent
 
+useEffect(() => {
+    if(!props.user.isAuthenticated && checkIfPathContains(pathname, authorizedAccessPaths) && props.user.checked){
+        replaceToLogin()
+    }
+})
+
 $(document).ready(function(){
-    console.log(process.env.REACT_APP_SERVER_NAME)
     if (!props.user.checked){
     $.ajax({
         url: process.env.REACT_APP_SERVER_NAME + `/ifAuthenticated`,         
@@ -45,16 +53,43 @@ $(document).ready(function(){
         success: function(data){   
             data = JSON.parse(data)
                 if (data.userInfo.authenticated == true){
-                    props.setIfCheckedAction(true)
-                    props.setMailAction(data.userInfo.mail)
-                    props.setIsAuthenticatedAction(data.userInfo.authenticated)
-                    props.setAuthoritiesAction(data.userInfo.authorities)
-                    props.setNicknameAction(data.userInfo.nickname)
+                    props.setInitAction({
+                        checked: true,
+                        mail: data.userInfo.mail,
+                        nickname: data.userInfo.nickname,
+                        authorities: data.userInfo.authorities,
+                        isAuthenticated: data.userInfo.authenticated
+                    })
+                } else {
+                    props.setInitAction({
+                        checked: true,
+                        mail: "",
+                        nickname: "",
+                        authorities: [],
+                        isAuthenticated: false
+                    }) 
                 }
         }
       });
     }
 })
+
+const checkIfPathContains = (line, paths) => {
+    for (let i = 0; i < paths.length; i++){
+        if (line.includes(paths[i])){
+            return true
+        }
+    }
+    return  false
+}
+
+var pathname = window.location.pathname
+var authorizedAccessPaths = ["/addBook", "/bookShelves", "/readBook", "/bookShelf"]
+
+const replaceToLogin = () =>{
+    navigate("/login", { replace: true });
+}
+
 
 if (!props.user.isAuthenticated){
     loginPath = <LinkContainer  to = "/login">
@@ -109,11 +144,7 @@ const mapStateToProps = (store) => {
   
 var mapDispatchToProps = dispatch => {
     return {
-      setIsAuthenticatedAction: payload => dispatch(setIsAuthenticated(payload)),
-      setMailAction: payload => dispatch(setMail(payload)),
-      setNicknameAction: payload => dispatch(setNickname(payload)),
-      setAuthoritiesAction: payload => dispatch(setAuthorities(payload)),
-      setIfCheckedAction: payload => dispatch(setIfChecked(payload))
+      setInitAction: payload => dispatch(initUser(payload))
     }
 }
 

@@ -6,6 +6,7 @@ import preload from "../grid.svg";
 import "../css/Preload.css"
 import { BsFillCaretLeftFill,  BsFillCaretRightFill} from "react-icons/bs"
 import { LinkContainer } from 'react-router-bootstrap'
+import { connect } from "react-redux";
 
 const BookRead = (props) => {
 
@@ -20,14 +21,13 @@ const BookRead = (props) => {
     let { id } = useParams();
 
     $(document).ready(function(){
-        $("#headlineRow").css({
-            "border-bottom": "solid grey 2px",
-            "margin-bottom": "20px"
-        })
-
         $(".imagePreview").css({
             "max-height": "90vh",
             "height" : "auto"
+        })
+        $("#headlineRow").css({
+            "border-bottom": "solid grey 2px",
+            "margin-bottom": "20px"
         })
 
         $(".choosePageRow").css({
@@ -44,7 +44,7 @@ const BookRead = (props) => {
         })
     })
 
-    if (!pagesCounted){
+    if (!pagesCounted && props.user.isAuthenticated){
         $.ajax({
             url: process.env.REACT_APP_SERVER_NAME + '/get/page-amount',         
             method: 'get',             
@@ -310,4 +310,13 @@ const BookRead = (props) => {
     )
 }
 
-export default BookRead
+
+const mapStateToProps = (store) => {
+    return {
+        user: store.user
+    }
+}
+  
+export default connect(
+    mapStateToProps
+)(BookRead)

@@ -6,14 +6,15 @@ import $ from "jquery";
 import preload from "../grid.svg";
 import "../css/Preload.css"
 import { LinkContainer } from 'react-router-bootstrap'
+import { connect } from "react-redux";
 
-const ShelfList = () => {
+const ShelfList = (props) => {
 
     const[shelvesList, setShlevesList] = useState([])
     const[shelfListGot, setShelfListGot] = useState(false)
     const[createShelfError, setCreateShelfError] = useState([])
 
-    if (!shelfListGot){
+    if (!shelfListGot && props.user.isAuthenticated){
     setShelfListGot(true)
     $.ajax({
         url: process.env.REACT_APP_SERVER_NAME + '/get/shelves',         
@@ -171,4 +172,13 @@ const ShelfList = () => {
     )
 }
 
-export default ShelfList
+
+const mapStateToProps = (store) => {
+    return {
+        user: store.user
+    }
+}
+  
+export default connect(
+    mapStateToProps
+)(ShelfList)
